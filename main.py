@@ -8,8 +8,6 @@ from tools.parse_sqlite import ParseSqlite
 
 app = Flask(__name__)
 
-# TODO Pagination: https://betterprogramming.pub/simple-flask-pagination-example-4190b12c2e2e
-
 UPLOAD_FOLDER = 'upload/'
 MAX_ROWS_PAGE = 20
 has_uploaded = False
