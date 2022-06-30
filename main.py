@@ -2,6 +2,7 @@ from flask import Flask, render_template
 
 app = Flask(__name__)
 
+# TODO Pagination: https://betterprogramming.pub/simple-flask-pagination-example-4190b12c2e2e
 
 @app.route('/')
 def index():

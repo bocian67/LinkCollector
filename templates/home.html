@@ -15,12 +15,12 @@
         <div class="container">
             <table class="u-full-width">
                 <tbody>
-
                 {% for url in url_collection %}
                     <tr>
                         <td>{{ url }}</td>
                         <td>
                             <select name="categories" id="categories">
+                                <option disabled selected value>Auswählen</option>
                                 {% for category in categories %}
                                     <option value='{{category}}'>{{category}}</option>
                                 {% endfor %}
