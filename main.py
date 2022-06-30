@@ -93,5 +93,8 @@ def delete_file():
 
 
 if __name__ == "__main__":
+    exists = os.path.exists(UPLOAD_FOLDER)
+    if not exists:
+        os.makedirs(UPLOAD_FOLDER)
     app.config["UPLOAD_PATH"] = UPLOAD_FOLDER
     app.run(host="0.0.0.0", port=8080, debug=True)
