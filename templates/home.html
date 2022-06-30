@@ -5,19 +5,43 @@
     <title>Link Collector</title>
     <link rel="stylesheet" href="../static/css/skeleton.css"/>
     <link rel="stylesheet" href="../static/css/normalize.css"/>
+    <style>
+        .pagination {
+          display: inline-block;
+        }
+
+        .pagination a {
+          color: black;
+          float: left;
+          padding: 8px 16px;
+          text-decoration: none;
+        }
+</style>
 </head>
 <body>
     <div class="container">
     <h2>URLs einordnen</h2>
+        {% if not has_uploaded %}
         <div class="container">
-            <h4>Upload kommt später</h4>
+            <form method="post" enctype="multipart/form-data">
+              <input type="file" name="file">
+              <input type="submit" value="Upload">
+            </form>
         </div>
+        {% else %}
+        <div class="container">
+            <form method="post" enctype="multipart/form-data" action="/delete">
+              <input type="submit" value="Datei löschen">
+            </form>
+        </div>
+        {% endif %}
         <div class="container">
             <table class="u-full-width">
                 <tbody>
                 {% for url in url_collection %}
                     <tr>
-                        <td>{{ url }}</td>
+                        <td>{{url["id"]}}</td>
+                        <td style="word-break: break-word">{{ url["url"] }}</td>
                         <td>
                             <select name="categories" id="categories">
                                 <option disabled selected value>Auswählen</option>
@@ -30,6 +54,11 @@
                 {% endfor %}
                 </tbody>
             </table>
+            <div class="pagination">
+                {% for num in range(pages) %}
+                    <a href="/?page={{num + 1}}">{{num + 1}}</a>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </body>
