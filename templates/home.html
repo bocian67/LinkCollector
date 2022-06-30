@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Link Collector</title>
+    <link rel="stylesheet" href="../static/css/skeleton.css"/>
+    <link rel="stylesheet" href="../static/css/normalize.css"/>
+</head>
+<body>
+    <div class="container">
+    <h2>URLs einordnen</h2>
+        <div class="container">
+            <h4>Upload kommt später</h4>
+        </div>
+        <div class="container">
+            <table class="u-full-width">
+                <tbody>
+
+                {% for url in url_collection %}
+                    <tr>
+                        <td>{{ url }}</td>
+                        <td>
+                            <select name="categories" id="categories">
+                                {% for category in categories %}
+                                    <option value='{{category}}'>{{category}}</option>
+                                {% endfor %}
+                            </select>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
