@@ -23,7 +23,7 @@
     <h2>URLs einordnen</h2>
         {% if not has_uploaded %}
         <div class="container">
-            <form method="post" enctype="multipart/form-data">
+            <form method="post" enctype="multipart/form-data" action="/upload">
               <input type="file" name="file">
               <input type="submit" value="Upload">
             </form>
@@ -36,24 +36,33 @@
         </div>
         {% endif %}
         <div class="container">
-            <table class="u-full-width">
-                <tbody>
-                {% for url in url_collection %}
-                    <tr>
-                        <td>{{url["id"]}}</td>
-                        <td style="word-break: break-word">{{ url["url"] }}</td>
-                        <td>
-                            <select name="categories" id="categories">
-                                <option disabled selected value>Auswählen</option>
-                                {% for category in categories %}
-                                    <option value='{{category}}'>{{category}}</option>
-                                {% endfor %}
-                            </select>
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
+            <form method="post">
+                 <table class="u-full-width" id="category_table">
+                    <tbody>
+                    {% for url in url_collection %}
+                        <tr>
+                            <td>{{url[0]}}</td>
+                            <input name="url" type="hidden" value="{{url[1]}}"/>
+                            <td style="word-break: break-word">{{ url[1] }}</td>
+                            <td>
+                                <select name="categories" id="categories">
+                                    {% if url[2] != "" %}
+                                        <option selected value="{{url[2]}}">{{url[2]}}</option>
+                                    {% else %}
+                                        <option selected value="">Auswählen</option>
+                                    {% endif %}
+                                    {% for category in categories %}
+                                        <option value='{{category}}'>{{category}}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <input type="submit" value="Speichern" name="save"/>
+            </form>
             <div class="pagination">
                 {% for num in range(pages) %}
                     <a href="/?page={{num + 1}}">{{num + 1}}</a>
