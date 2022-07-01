@@ -16,9 +16,31 @@
           padding: 8px 16px;
           text-decoration: none;
         }
-</style>
+    </style>
+    <script>
+        function addParameterAndReturn(element, paramName, paramValue) {
+            let newUrl = new URL(window.location.href)
+            newUrl.searchParams.set(paramName, paramValue);
+            element.setAttribute("href", newUrl);
+        }
+
+        function setFilterParameter(paramName, paramValue) {
+            let newUrl = new URL(window.location.href)
+            if(paramValue === false) {
+                newUrl.searchParams.delete(paramName);
+            } else {
+                newUrl.searchParams.set(paramName, paramValue);
+            }
+            window.location.href = newUrl
+        }
+
+        function setStates() {
+            let showUncategorizedCheckbox = document.getElementsByName("show_uncategorized")[0]
+            showUncategorizedCheckbox.checked = document.location.href.includes("show_uncategorized")
+        }
+    </script>
 </head>
-<body>
+<body onload="setStates()">
     <div class="container">
     <h2>URLs einordnen</h2>
         {% if not has_uploaded %}
@@ -36,6 +58,15 @@
         </div>
         {% endif %}
         <div class="container">
+            <h5>Filter</h5>
+                <div class="row">
+                    <label>
+                        <input type="checkbox" name="show_uncategorized"
+                           onchange="setFilterParameter('show_uncategorized', this.checked)"/>
+                        Zeige unkategorisierte Elemente
+                    </label>
+                </div>
+            <h5>Daten</h5>
             <form method="post">
                  <table class="u-full-width" id="category_table">
                     <tbody>
@@ -65,7 +96,7 @@
             </form>
             <div class="pagination">
                 {% for num in range(pages) %}
-                    <a href="/?page={{num + 1}}">{{num + 1}}</a>
+                    <a href="#" onclick="addParameterAndReturn(this, 'page', '{{num + 1}}')">{{num + 1}}</a>
                 {% endfor %}
             </div>
         </div>

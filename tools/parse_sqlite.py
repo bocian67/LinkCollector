@@ -14,7 +14,7 @@ class ParseSqlite:
         all_entries = cursor.fetchall()
         modified_entries = []
         for entry in all_entries:
-            match = re.match(r"((http:\/\/)?(https:\/\/)?(\w*\.)?(\w*\.)+(\w*)+)", entry[0])
+            match = re.match(r"((http:\/\/)?(https:\/\/)?((\w*[-]*)+(\.)*)+)", entry[0])
             if match:
                 modified_entries.append(match[0])
         return modified_entries

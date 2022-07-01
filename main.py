@@ -42,9 +42,18 @@ def index():
             page = int(request.args.get('page', 1))
         except ValueError:
             page = 1
+        try:
+            show_uncategorized = bool(request.args.get("show_uncategorized"))
+        except:
+            show_uncategorized = False
         pages = ceil(db_service.get_entries_count() / MAX_ROWS_PAGE)
         offset = (page - 1) * MAX_ROWS_PAGE
-        url_collection = db_service.get_entries(offset, MAX_ROWS_PAGE)
+
+        if show_uncategorized:
+            url_collection = db_service.get_entries(offset, MAX_ROWS_PAGE)
+        else:
+            url_collection = db_service.get_entries_with_category("", offset, MAX_ROWS_PAGE)
+
         return render_template("home.html",
                                url_collection=url_collection,
                                categories=categories,

@@ -26,7 +26,9 @@ class DbService:
             update urls set category = ? where url = ?
         """
         self.SELECT_ALL_ENTRIES = """SELECT rowid, * FROM urls"""
-        self.SELECT_ENTRIES_BY_LIMIT = """SELECT rowid, * FROM urls limit ?, ?"""
+        self.BY_LIMIT = """ limit ?, ?"""
+        self.WHERE_CATEGORY = """ WHERE category=?"""
+        self.WHERE_NOT_CATEGORY = """ WHERE NOT category=?"""
         self.GET_ENTRY_COUNT = """SELECT COUNT(*) FROM urls"""
 
         # Add table init
@@ -50,7 +52,15 @@ class DbService:
         if start is None and limit is None:
             self.cursor.execute(self.SELECT_ALL_ENTRIES)
         else:
-            self.cursor.execute(self.SELECT_ENTRIES_BY_LIMIT, (start, limit))
+            self.cursor.execute(self.SELECT_ALL_ENTRIES + self.BY_LIMIT, (start, limit))
+        return self.cursor.fetchall()
+
+    def get_entries_with_category(self, category, start=None, limit=None):
+        if start is None and limit is None:
+            self.cursor.execute(self.SELECT_ALL_ENTRIES + self.WHERE_NOT_CATEGORY, (category,))
+        else:
+            self.cursor.execute(self.SELECT_ALL_ENTRIES + self.WHERE_NOT_CATEGORY + self.BY_LIMIT,
+                                (category, start, limit))
         return self.cursor.fetchall()
 
     def get_entries_count(self):
