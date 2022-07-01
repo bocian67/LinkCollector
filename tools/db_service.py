@@ -55,11 +55,19 @@ class DbService:
             self.cursor.execute(self.SELECT_ALL_ENTRIES + self.BY_LIMIT, (start, limit))
         return self.cursor.fetchall()
 
-    def get_entries_with_category(self, category, start=None, limit=None):
+    def get_entries_without_category(self, category, start=None, limit=None):
         if start is None and limit is None:
             self.cursor.execute(self.SELECT_ALL_ENTRIES + self.WHERE_NOT_CATEGORY, (category,))
         else:
             self.cursor.execute(self.SELECT_ALL_ENTRIES + self.WHERE_NOT_CATEGORY + self.BY_LIMIT,
+                                (category, start, limit))
+        return self.cursor.fetchall()
+
+    def get_entries_with_category(self, category, start=None, limit=None):
+        if start is None and limit is None:
+            self.cursor.execute(self.SELECT_ALL_ENTRIES + self.WHERE_CATEGORY, (category,))
+        else:
+            self.cursor.execute(self.SELECT_ALL_ENTRIES + self.WHERE_CATEGORY + self.BY_LIMIT,
                                 (category, start, limit))
         return self.cursor.fetchall()
 

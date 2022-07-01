@@ -52,7 +52,7 @@ def index():
         if show_uncategorized:
             url_collection = db_service.get_entries(offset, MAX_ROWS_PAGE)
         else:
-            url_collection = db_service.get_entries_with_category("", offset, MAX_ROWS_PAGE)
+            url_collection = db_service.get_entries_without_category("", offset, MAX_ROWS_PAGE)
 
         return render_template("home.html",
                                url_collection=url_collection,
