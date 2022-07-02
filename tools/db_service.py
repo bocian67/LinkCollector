@@ -27,8 +27,11 @@ class DbService:
         """
         self.SELECT_ALL_ENTRIES = """SELECT rowid, * FROM urls"""
         self.BY_LIMIT = """ limit ?, ?"""
-        self.WHERE_CATEGORY = """ WHERE category=?"""
-        self.WHERE_NOT_CATEGORY = """ WHERE NOT category=?"""
+        self.CATEGORY = """ category=?"""
+        self.NOT_CATEGORY = """ NOT category=?"""
+        self.NAME = """ url LIKE ?"""
+        self.AND = """ AND"""
+        self.WHERE = """ WHERE"""
         self.GET_ENTRY_COUNT = """SELECT COUNT(*) FROM urls"""
 
         # Add table init
@@ -55,21 +58,69 @@ class DbService:
             self.cursor.execute(self.SELECT_ALL_ENTRIES + self.BY_LIMIT, (start, limit))
         return self.cursor.fetchall()
 
-    def get_entries_without_category(self, category, start=None, limit=None):
-        if start is None and limit is None:
-            self.cursor.execute(self.SELECT_ALL_ENTRIES + self.WHERE_NOT_CATEGORY, (category,))
-        else:
-            self.cursor.execute(self.SELECT_ALL_ENTRIES + self.WHERE_NOT_CATEGORY + self.BY_LIMIT,
-                                (category, start, limit))
+    def get_entries_with_filter(self, name_filter=None, include_category_filter=None, exclude_category_filter=None, start=None, limit=None):
+        sql = self.SELECT_ALL_ENTRIES
+        add_and = False
+        has_where = False
+        values = ()
+        if name_filter is not None:
+            sql += self.WHERE
+            has_where = True
+            sql += self.NAME
+            values += ('%' + name_filter + '%',)
+            add_and = True
+        if include_category_filter is not None:
+            if add_and:
+                sql += self.AND
+            if not has_where:
+                sql += self.WHERE
+                has_where = True
+            sql += self.CATEGORY
+            values += (include_category_filter,)
+            add_and = True
+        if exclude_category_filter is not None:
+            if add_and:
+                sql += self.AND
+            if not has_where:
+                sql += self.WHERE
+                has_where = True
+            sql += self.NOT_CATEGORY
+            values += (exclude_category_filter,)
+            add_and = True
+        if start is not None and limit is not None:
+            sql += self.BY_LIMIT
+            values += (start, limit)
+        self.cursor.execute(sql, values)
         return self.cursor.fetchall()
 
-    def get_entries_with_category(self, category, start=None, limit=None):
-        if start is None and limit is None:
-            self.cursor.execute(self.SELECT_ALL_ENTRIES + self.WHERE_CATEGORY, (category,))
-        else:
-            self.cursor.execute(self.SELECT_ALL_ENTRIES + self.WHERE_CATEGORY + self.BY_LIMIT,
-                                (category, start, limit))
-        return self.cursor.fetchall()
-
-    def get_entries_count(self):
-        return self.cursor.execute(self.GET_ENTRY_COUNT).fetchone()[0]
+    def get_entries_count(self, name_filter=None, include_category_filter=None, exclude_category_filter=None):
+        sql = self.GET_ENTRY_COUNT
+        add_and = False
+        has_where = False
+        values = ()
+        if name_filter is not None:
+            sql += self.WHERE
+            has_where = True
+            sql += self.NAME
+            values += ('%' + name_filter + '%',)
+            add_and = True
+        if include_category_filter is not None:
+            if add_and:
+                sql += self.AND
+            if not has_where:
+                sql += self.WHERE
+                has_where = True
+            sql += self.CATEGORY
+            values += (include_category_filter,)
+            add_and = True
+        if exclude_category_filter is not None:
+            if add_and:
+                sql += self.AND
+            if not has_where:
+                sql += self.WHERE
+                has_where = True
+            sql += self.NOT_CATEGORY
+            values += (exclude_category_filter,)
+            add_and = True
+        self.cursor.execute(sql, values)
+        return self.cursor.fetchone()[0]

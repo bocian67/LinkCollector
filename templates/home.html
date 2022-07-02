@@ -35,8 +35,12 @@
         }
 
         function setStates() {
+            let searchParams = new URLSearchParams(window.location.search)
             let showUncategorizedCheckbox = document.getElementsByName("show_uncategorized")[0]
-            showUncategorizedCheckbox.checked = document.location.href.includes("show_uncategorized")
+            showUncategorizedCheckbox.checked = searchParams.get("show_uncategorized")
+
+            let filterByName = document.getElementsByName("filter_by_name")[0]
+            filterByName.value = searchParams.get("namefilter")
         }
     </script>
 </head>
@@ -66,6 +70,14 @@
                         Zeige unkategorisierte Elemente
                     </label>
                 </div>
+                <div class="row">
+                    <label>
+                        Suche
+                    </label>
+                    <input type="search" name="filter_by_name"
+                           onchange="setFilterParameter('namefilter', this.value)"/>
+                    <input type="submit" value="Filtern" onsubmit="setFilterParameter('namefilter', document.getElementsByName('filter_by_name')[0].value)">
+                </div>
             <h5>Daten</h5>
             <form method="post">
                  <table class="u-full-width" id="category_table">
@@ -92,7 +104,7 @@
                     </tbody>
                 </table>
 
-                <input type="submit" value="Speichern" name="save"/>
+                <input type="submit" class="button-primary" value="Speichern" name="save"/>
             </form>
             <div class="pagination">
                 {% for num in range(pages) %}

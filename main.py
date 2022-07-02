@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 UPLOAD_FOLDER = 'upload/'
 DATABASE = "Linkcollection.sqlite"
-MAX_ROWS_PAGE = 20
+MAX_ROWS_PAGE = 50
 has_uploaded = False
 categories = [
             "Kunst und Unterhaltung",
@@ -38,6 +38,8 @@ def index():
     global has_uploaded
     if request.method == "GET":
         has_uploaded = len(os.listdir(app.config["UPLOAD_PATH"])) > 0
+
+        # Filter arguments
         try:
             page = int(request.args.get('page', 1))
         except ValueError:
@@ -46,13 +48,20 @@ def index():
             show_uncategorized = bool(request.args.get("show_uncategorized"))
         except:
             show_uncategorized = False
-        pages = ceil(db_service.get_entries_count() / MAX_ROWS_PAGE)
+        try:
+            filter_by_name = request.args.get("namefilter")
+        except:
+            filter_by_name = None
+
+        not_category_filter = None
+        category_filter = None
+        if not show_uncategorized:
+            not_category_filter = ""
+
+        pages = ceil(db_service.get_entries_count(filter_by_name, category_filter, not_category_filter) / MAX_ROWS_PAGE)
         offset = (page - 1) * MAX_ROWS_PAGE
 
-        if show_uncategorized:
-            url_collection = db_service.get_entries(offset, MAX_ROWS_PAGE)
-        else:
-            url_collection = db_service.get_entries_without_category("", offset, MAX_ROWS_PAGE)
+        url_collection = db_service.get_entries_with_filter(filter_by_name, category_filter, not_category_filter, offset, MAX_ROWS_PAGE)
 
         return render_template("home.html",
                                url_collection=url_collection,
