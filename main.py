@@ -130,4 +130,4 @@ if __name__ == "__main__":
         os.makedirs(UPLOAD_FOLDER)
     app.config["DATABASE"] = DATABASE
     app.config["UPLOAD_PATH"] = UPLOAD_FOLDER
-    app.run(host="0.0.0.0", port=8080, debug=True)
+    app.run(host="0.0.0.0", port=9999, debug=True)
