@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+upload/*
+Linkcollection.sqlite
+
 # C extensions
 *.so
 

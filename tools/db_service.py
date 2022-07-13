@@ -31,6 +31,7 @@ class DbService:
         self.NOT_CATEGORY = """ NOT category=?"""
         self.NAME = """ url LIKE ?"""
         self.AND = """ AND"""
+        self.OR = """ OR"""
         self.WHERE = """ WHERE"""
         self.GET_ENTRY_COUNT = """SELECT COUNT(*) FROM urls"""
 
@@ -75,8 +76,17 @@ class DbService:
             if not has_where:
                 sql += self.WHERE
                 has_where = True
-            sql += self.CATEGORY
-            values += (include_category_filter,)
+            if isinstance(include_category_filter, list):
+                add_or = False
+                for category_filter in include_category_filter:
+                    if add_or:
+                        sql += self.OR
+                    sql += self.CATEGORY
+                    values += (category_filter,)
+                    add_or = True
+            else:
+                sql += self.CATEGORY
+                values += (include_category_filter,)
             add_and = True
         if exclude_category_filter is not None:
             if add_and:
@@ -84,8 +94,17 @@ class DbService:
             if not has_where:
                 sql += self.WHERE
                 has_where = True
-            sql += self.NOT_CATEGORY
-            values += (exclude_category_filter,)
+            if isinstance(exclude_category_filter, list):
+                add_or = False
+                for category_filter in exclude_category_filter:
+                    if add_or:
+                        sql += self.OR
+                    sql += self.NOT_CATEGORY
+                    values += (category_filter,)
+                    add_or = True
+            else:
+                sql += self.NOT_CATEGORY
+                values += (exclude_category_filter,)
             add_and = True
         if start is not None and limit is not None:
             sql += self.BY_LIMIT

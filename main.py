@@ -5,7 +5,8 @@ from flask import Flask, render_template, request, redirect
 from werkzeug.utils import secure_filename
 
 from tools.db_service import DbService
-from tools.parse_sqlite import ParseSqlite
+from tools.parse_ese import ParseInternetExplorer
+from tools.parse_sqlite import ParseFirefox, ParseChrome
 
 app = Flask(__name__)
 
@@ -92,9 +93,19 @@ def upload_file():
         file.save(os.path.join(app.config['UPLOAD_PATH'], filename))
         has_uploaded = True
         uploaded_filename = filename
-        parser = ParseSqlite(os.path.join(app.config['UPLOAD_PATH'], uploaded_filename))
-        url_collection = parser.get_history_urls()
-        db_service.write_entry_with_no_category(url_collection)
+        parser = None
+        if filename == "places.sqlite":
+            parser = ParseFirefox(os.path.join(app.config['UPLOAD_PATH'], uploaded_filename))
+        elif filename == "History":
+            parser = ParseChrome(os.path.join(app.config['UPLOAD_PATH'], uploaded_filename))
+        elif filename == "WebCacheV01.dat":
+            parser = ParseInternetExplorer(os.path.join(app.config["UPLOAD_PATH"], uploaded_filename))
+        else:
+            delete_file()
+        # TODO: Show error
+        if parser is not None:
+            url_collection = parser.get_history_urls()
+            db_service.write_entry_with_no_category(url_collection)
         return redirect(request.url_root)
 
 
