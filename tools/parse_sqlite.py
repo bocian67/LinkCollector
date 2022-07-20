@@ -1,6 +1,7 @@
 import re
 import sqlite3
 
+# TODO: Classfiy .onion programatically
 
 def get_unique_urls(entries):
     unique_entries = []

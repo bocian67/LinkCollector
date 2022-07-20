@@ -104,8 +104,8 @@ def upload_file():
             delete_file()
         # TODO: Show error
         if parser is not None:
-            url_collection = parser.get_history_urls()
-            db_service.write_entry_with_no_category(url_collection)
+            urls = parser.get_history_urls()
+            db_service.write_entry_with_no_category(urls)
         return redirect(request.url_root)
 
 
