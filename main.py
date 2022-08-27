@@ -9,7 +9,7 @@ from tools.parse_ese import ParseInternetExplorer
 from tools.parse_sqlite import ParseFirefox, ParseChrome
 
 app = Flask(__name__)
-
+# Initial variables
 UPLOAD_FOLDER = 'upload/'
 DATABASE = "Linkcollection.sqlite"
 MAX_ROWS_PAGE = 50
@@ -32,10 +32,12 @@ categories = [
         ]
 url_collection = []
 uploaded_filename = ""
+# Open database
 db_service = DbService(DATABASE)
 
 @app.route('/', methods=["GET", "POST"])
 def index():
+    # Landing page to classify urls
     global has_uploaded
     if request.method == "GET":
         has_uploaded = len(os.listdir(app.config["UPLOAD_PATH"])) > 0
@@ -58,7 +60,7 @@ def index():
         category_filter = None
         if not show_uncategorized:
             not_category_filter = ""
-
+        # Page of table
         pages = ceil(db_service.get_entries_count(filter_by_name, category_filter, not_category_filter) / MAX_ROWS_PAGE)
         offset = (page - 1) * MAX_ROWS_PAGE
 
@@ -78,6 +80,7 @@ def index():
 
 @app.route("/upload", methods=["POST"])
 def upload_file():
+    # Upload a database and extract url bases
     global has_uploaded
     global uploaded_filename
     # check if the post request has the file part
@@ -94,6 +97,7 @@ def upload_file():
         has_uploaded = True
         uploaded_filename = filename
         parser = None
+        # Detect browser, if valid: parse
         if filename == "places.sqlite":
             parser = ParseFirefox(os.path.join(app.config['UPLOAD_PATH'], uploaded_filename))
         elif filename == "History":
@@ -111,6 +115,7 @@ def upload_file():
 
 @app.route("/delete", methods=["POST"])
 def delete_file():
+    # Delete database file from server
     global uploaded_filename
     global has_uploaded
     try:

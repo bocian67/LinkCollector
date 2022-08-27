@@ -2,6 +2,7 @@ import sqlite3
 
 
 class DbService:
+    # Service to handle SQLite database
     def __init__(self, path):
         self.path = path
         self.db = sqlite3.connect(self.path, check_same_thread=False)
@@ -42,17 +43,20 @@ class DbService:
         self.db.commit()
 
     def write_entry(self, urls, categories):
+        # Write url with category as entry
         for index in range(len(urls)):
             if categories[index] != "":
                 self.cursor.execute(self.UPDATE_ENTRY, (categories[index], urls[index]))
         self.db.commit()
 
     def write_entry_with_no_category(self, urls):
+        # Init urls with not category
         for index in range(len(urls)):
             self.cursor.execute(self.INSERT_ENTRY, (urls[index], ""))
         self.db.commit()
 
     def get_entries(self, start=None, limit=None):
+        # Get entries from database to display in web page
         if start is None and limit is None:
             self.cursor.execute(self.SELECT_ALL_ENTRIES)
         else:
@@ -60,10 +64,12 @@ class DbService:
         return self.cursor.fetchall()
 
     def get_entries_with_filter(self, name_filter=None, include_category_filter=None, exclude_category_filter=None, start=None, limit=None):
+        # Get entries filtered by category and offset
         sql = self.SELECT_ALL_ENTRIES
         add_and = False
         has_where = False
         values = ()
+        # Set SQL Query based on filter parameter
         if name_filter is not None:
             sql += self.WHERE
             has_where = True
@@ -109,10 +115,12 @@ class DbService:
         if start is not None and limit is not None:
             sql += self.BY_LIMIT
             values += (start, limit)
+        # Execute builded SQL Query and fetch entries
         self.cursor.execute(sql, values)
         return self.cursor.fetchall()
 
     def get_entries_count(self, name_filter=None, include_category_filter=None, exclude_category_filter=None):
+        # Get count of entries using filter to determine table pages
         sql = self.GET_ENTRY_COUNT
         add_and = False
         has_where = False
@@ -141,5 +149,6 @@ class DbService:
             sql += self.NOT_CATEGORY
             values += (exclude_category_filter,)
             add_and = True
+        # Execute builded SQL query and fetch values
         self.cursor.execute(sql, values)
         return self.cursor.fetchone()[0]

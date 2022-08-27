@@ -1,9 +1,9 @@
 import re
 import sqlite3
 
-# TODO: Classfiy .onion programatically
 
 def get_unique_urls(entries):
+    # Get unique url bases
     unique_entries = []
     for entry in entries:
         match = re.match(r"((http:\/\/)?(https:\/\/)?((\w*[-]*)+(\.)*)+)", entry[0])
@@ -13,6 +13,7 @@ def get_unique_urls(entries):
 
 
 def get_history_urls(path, sql_get_history):
+    # Get history from path using specified query
     db = sqlite3.connect(path)
     cursor = db.cursor()
     cursor.execute(sql_get_history)
@@ -21,6 +22,7 @@ def get_history_urls(path, sql_get_history):
 
 
 class ParseFirefox:
+    # Define history parameter for Firefox
     def __init__(self, path):
         self.path = path
         self.GET_ALL_HISTORY = "SELECT url FROM moz_places ORDER BY id"
@@ -31,6 +33,7 @@ class ParseFirefox:
 
 # Is also used to parse Edge
 class ParseChrome:
+    # Define history parameter for Chrome (and Edge)
     def __init__(self, path):
         self.path = path
         self.GET_ALL_HISTORY = "SELECT url FROM urls ORDER BY id"
